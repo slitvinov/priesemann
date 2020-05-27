@@ -22,7 +22,8 @@ def SIR_with_change_points(
     N,
     priors_dict=None,
     weekends_modulated=False,
-    weekend_modulation_type = 'step'
+    weekend_modulation_type = 'step',
+    student_nu = 4
 ):
     """
         Parameters
@@ -287,7 +288,7 @@ def SIR_with_change_points(
         num_days_data = new_cases_obs.shape[-1]
         pm.StudentT(
             name="_new_cases_studentT",
-            nu=4,
+            nu = student_nu,
             mu=new_cases_inferred_eff[:num_days_data],
             sigma=tt.abs_(new_cases_inferred[:num_days_data] + 1) ** 0.5
             * sigma_obs,  # +1 and tt.abs to avoid nans
