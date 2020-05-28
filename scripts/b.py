@@ -24,11 +24,11 @@ import theano.tensor as tt
 try:
     import covid19_inference as cov19
 except ModuleNotFoundError:
-    sys.path.append('../..')
+    sys.path.append('../')
     import covid19_inference as cov19
 
-path_to_save = '../../figures/'
-path_save_pickled = '../../data'
+path_to_save = '../figures/'
+path_save_pickled = '../data/'
 rerun = True
 
 
