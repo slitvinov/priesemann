@@ -66,23 +66,11 @@ if rerun:
         traces.append(pm.sample(model=model, init='advi', draws=4000, tune=1000, cores = 12))
 
 
-    pickle.dump([models, traces], open(path_save_pickled + 'SIR_3scenarios_with_sine.pickled', 'wb'))
+    pickle.dump([models, traces], open(path_save_pickled + 'a.pickled', 'wb'))
 
 else:
-    models, traces = pickle.load(open(path_save_pickled + 'SIR_3scenarios_with_sine.pickled', 'rb'))
-
-
-
-
-# In[21]:
-
-
+    models, traces = pickle.load(open(path_save_pickled + 'a.pickled', 'rb'))
 exec(open('figures_revised.py').read())
-
-
-# In[15]:
-
-
 trace = traces[3]
 fig, ax = plt.subplots(figsize=(5,4))
 time = np.arange(-len(cases_obs)+1, 0)
@@ -100,11 +88,6 @@ print(np.median(np.sum(trace.new_cases[:, :num_days_data], axis=1)+ trace.I_begi
 #plt.tight_layout()
 ax.xaxis.set_major_locator(matplotlib.dates.AutoDateLocator())
 ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%-m/%-d'))
-
-
-# In[33]:
-
-
 create_figure_distributions(models[1], traces[1],
                               additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:red',
                               num_changepoints=1, xlim_tbegin=7, save_to = path_to_save +'Fig_S2_paper')
@@ -114,10 +97,6 @@ create_figure_distributions(models[2], traces[2],
 create_figure_distributions(models[3], traces[3],
                               additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:green',
                               num_changepoints=3, save_to = path_to_save + 'Fig_S4_paper')
-
-
-# In[34]:
-
 create_figure_timeseries(traces[0], 'tab:blue',
                          plot_red_axis=True, save_to=path_to_save + '0', add_more_later = False)
 create_figure_timeseries(traces[1], 'tab:red',
@@ -126,10 +105,6 @@ create_figure_timeseries(traces[2], 'tab:orange',
                          plot_red_axis=True, save_to=path_to_save + '2', add_more_later = False)
 create_figure_timeseries(traces[3], 'tab:green',
                          plot_red_axis=True, save_to=path_to_save + '3', add_more_later = False)
-
-
-# In[18]:
-
 
 print('\n0 step model\n')
 print(pm.loo(traces[0], models[0]))
@@ -142,16 +117,3 @@ print(pm.loo(traces[2], models[2]))
 
 print('\n3 steps model\n')
 print(pm.loo(traces[3], models[3]))
-
-
-# In[32]:
-
-
-for i in range(4):
-    print(f"\nnumber of changepoints: {i}")
-    for j in range(i+1):
-        print(f'lambda* {j}')
-        print(print_median_CI(traces[i][f"lambda_{j}"] - traces[i].mu, prec=2))
-
-
-# In[ ]:

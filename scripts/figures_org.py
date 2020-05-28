@@ -56,8 +56,7 @@ date_show_minor_ticks = True
 
 # set to None to keep everything a vector, with `-1` Posteriors are rastered (see above)
 rasterization_zorder = -1
-
-# country = "Germany"
+country = "Germany"
 # confirmed_cases = cov19.get_jhu_confirmed_cases()
 # date_data_begin = datetime.datetime(2020, 3, 1)
 # date_data_end = cov19.get_last_date(confirmed_cases)
@@ -522,7 +521,7 @@ def create_figure_timeseries(
     trace,
     color="tab:green",
     save_to=None,
-    num_days_futu_to_plot=18,
+    num_days_futu_to_plot=1,
     y_lim_lambda=(-0.15, 0.45),
     plot_red_axis=True,
     axes=None,
