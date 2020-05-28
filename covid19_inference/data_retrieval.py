@@ -31,69 +31,17 @@ def _jhu_to_iso(fp_csv:str) -> pd.DataFrame:
     df.columns = [datetime.datetime.strptime(d, '%m/%d/%y') for d in df.columns]
     return df
 
-
-def get_jhu_cdr(
-        country:str, state:str,
-        fp_confirmed:str='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv',
-        fp_deaths:str='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv',
-        fp_recovered:str='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv',
-    ) -> pd.DataFrame:
-    """Gets confirmed, deaths and recovered Johns Hopkins University dataset as a DataFrame with datetime index.
-
-    Parameters
-    ----------
-    country : string
-        name of the country (the "Country/Region" column), can be None if state is set
-    state : string
-        name of the state (the "Province/State" column), can be None if country is set
-    fp_confirmed : string
-        filepath or URL pointing to the original CSV of global confirmed cases
-    fp_deaths : string
-        filepath or URL pointing to the original CSV of global deaths
-    fp_recovered : string
-        filepath or URL pointing to the original CSV of global recovered cases
-
-    Returns
-    -------
-    : pandas.DataFrame
-    """
-    # load & transform
-    df_confirmed = _jhu_to_iso(fp_confirmed)
-    df_deaths = _jhu_to_iso(fp_deaths)
-    df_recovered = _jhu_to_iso(fp_recovered)
-
-    # filter
-    df = pd.DataFrame(columns=['date', 'confirmed', 'deaths', 'recovered']).set_index('date')
-    df['confirmed'] = df_confirmed.loc[(country, state)]
-    df['deaths'] = df_deaths.loc[(country, state)]
-    df['recovered'] = df_recovered.loc[(country, state)]
-    df.index.name = 'date'
-
-    return df
-
-
 def get_jhu_confirmed_cases():
     """
-        Attempts to download the most current data from the online repository of the
-        Coronavirus Visual Dashboard operated by the Johns Hopkins University
-        and falls back to the backup provided with our repo if it fails.
-        Only works if the module is located in the repo directory.
-
         Returns
         -------
         : confirmed_cases
             pandas table with confirmed cases
     """
-    try:
-        url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
-        confirmed_cases = pd.read_csv(url, sep=",")
-    except Exception as e:
-        print("Failed to download current data, using local copy.")
-        this_dir = os.path.dirname(__file__)
-        confirmed_cases = pd.read_csv(
-            this_dir + "/../data/confirmed_global_fallback_2020-04-28.csv", sep=","
-        )
-
+    this_dir = os.path.dirname(__file__)
+    confirmed_cases = pd.read_csv(
+        this_dir + "/../data/confirmed_global_fallback_2020-04-28.csv", sep=","
+    )
     return confirmed_cases
 
 
