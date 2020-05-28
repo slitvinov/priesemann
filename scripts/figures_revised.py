@@ -54,60 +54,6 @@ date_show_minor_ticks = True
 # set to None to keep everything a vector, with `-1` Posteriors are rastered (see above)
 rasterization_zorder = -1
 
-def run_model_three_change_points():
-    print(
-        "Cases yesterday ({}): {} and "
-        "day before yesterday: {}".format(date_data_end.isoformat(), *cases_obs[:-3:-1])
-    )
-
-    # these variables are needed by some plot functions
-    global prior_date_mild_dist_begin
-    global prior_date_strong_dist_begin
-    global prior_date_contact_ban_begin
-    prior_date_mild_dist_begin = datetime.datetime(2020, 3, 9)
-    prior_date_strong_dist_begin = datetime.datetime(2020, 3, 16)
-    prior_date_contact_ban_begin = datetime.datetime(2020, 3, 23)
-
-    change_points = [
-        dict(
-            pr_mean_date_begin_transient=prior_date_mild_dist_begin,
-            pr_sigma_date_begin_transient=3,
-            pr_median_lambda=0.2,
-            pr_sigma_lambda=0.5,
-        ),
-        dict(
-            pr_mean_date_begin_transient=prior_date_strong_dist_begin,
-            pr_sigma_date_begin_transient=1,
-            pr_median_lambda=1 / 8,
-            pr_sigma_lambda=0.5,
-        ),
-        dict(
-            pr_mean_date_begin_transient=prior_date_contact_ban_begin,
-            pr_sigma_date_begin_transient=1,
-            pr_median_lambda=1 / 8 / 2,
-            pr_sigma_lambda=0.5,
-        ),
-    ]
-
-    models = []
-    for num_change_points in range(4):
-        model = cov19.SIR_with_change_points(
-            new_cases_obs=np.diff(cases_obs),
-            change_points_list=change_points[:num_change_points],
-            date_begin_simulation=date_begin_sim,
-            num_days_sim=num_days_sim,
-            diff_data_sim=diff_data_sim,
-            N=83e6,
-            priors_dict=None,
-        )
-        models.append(model)
-
-    traces = []
-    for model in models:
-        traces.append(pm.sample(model=model, init="advi", draws=3000))
-
-    return models, traces
-
 def create_figure_timeseries(
     trace,
     color="tab:green",
