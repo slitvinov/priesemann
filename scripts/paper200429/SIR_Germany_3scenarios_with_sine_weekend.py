@@ -145,13 +145,14 @@ create_figure_distributions(models[3], traces[3],
 
 # In[34]:
 
-
+create_figure_timeseries(traces[0], 'tab:blue',
+                         plot_red_axis=True, save_to=path_to_save + '0', add_more_later = False)
 create_figure_timeseries(traces[1], 'tab:red',
-                       plot_red_axis=True, save_to=path_to_save + 'Fig_S1_paper')
+                         plot_red_axis=True, save_to=path_to_save + '1', add_more_later = False)
 create_figure_timeseries(traces[2], 'tab:orange',
-                       plot_red_axis=True, save_to=path_to_save + 'Fig_3_paper')
+                         plot_red_axis=True, save_to=path_to_save + '2', add_more_later = False)
 create_figure_timeseries(traces[3], 'tab:green',
-                       plot_red_axis=True, save_to=path_to_save + 'Fig_S3_paper')
+                         plot_red_axis=True, save_to=path_to_save + '3', add_more_later = False)
 
 
 # In[18]:
