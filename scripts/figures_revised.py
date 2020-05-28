@@ -42,12 +42,9 @@ post_style = {
 }
 
 # format the date on the x axis (see https://strftime.org/) example April 1 2020
-# date_format = "%m/%d"  # 04/01
 date_format = "%b %-d"  # Apr 1
-# date_format = "%-d. %B" # 1. April
 try:
     locale.setlocale(locale.LC_ALL, "en_US")
-    # locale.setlocale(locale.LC_ALL,'de_DE')
 except:
     pass
 
@@ -56,33 +53,6 @@ date_show_minor_ticks = True
 
 # set to None to keep everything a vector, with `-1` Posteriors are rastered (see above)
 rasterization_zorder = -1
-
-# country = "Germany"
-# confirmed_cases = cov19.get_jhu_confirmed_cases()
-# date_data_begin = datetime.datetime(2020, 3, 1)
-# date_data_end = cov19.get_last_date(confirmed_cases)
-
-# number of days in the data -1, to match the new cases
-# num_days_data = (date_data_end - date_data_begin).days
-# how many days the simulation starts before the data
-# diff_data_sim = 16
-# how many days to forecast
-# num_days_future = 28
-# days of simulation until forecast starts
-# diff_to_0 = num_days_data + diff_data_sim
-
-# date_begin_sim = date_data_begin - datetime.timedelta(days=diff_data_sim)
-# date_end_sim = date_data_end + datetime.timedelta(days=num_days_future)
-# num_days_sim = (date_end_sim - date_begin_sim).days
-
-# cases_obs = cov19.filter_one_country(
-#     confirmed_cases, country, date_data_begin, date_data_end
-# )
-
-# ------------------------------------------------------------------------------ #
-# main functions
-# ------------------------------------------------------------------------------ #
-
 
 def run_model_three_change_points():
     print(
@@ -1616,10 +1586,6 @@ def create_figure_distributions_old(
         plt.savefig(save_to + ".pdf", bbox_inches="tight", pad_inches=0, dpi=300)
         plt.savefig(save_to + ".png", bbox_inches="tight", pad_inches=0, dpi=300)
 
-
-# ------------------------------------------------------------------------------ #
-# helper
-# ------------------------------------------------------------------------------ #
 
 # format yaxis 10_000 as 10 k
 format_k = lambda num, _: "${:.0f}\,$k".format(num / 1_000)
