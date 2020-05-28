@@ -4,8 +4,6 @@ import os
 import numpy as np
 import pandas as pd
 
-import urllib, json
-
 
 def _jhu_to_iso(fp_csv:str) -> pd.DataFrame:
     """Convert Johns Hopkins University dataset to nicely formatted DataFrame.
@@ -39,9 +37,7 @@ def get_jhu_confirmed_cases():
             pandas table with confirmed cases
     """
     this_dir = os.path.dirname(__file__)
-    confirmed_cases = pd.read_csv(
-        this_dir + "/../data/confirmed_global_fallback_2020-04-28.csv", sep=","
-    )
+    confirmed_cases = pd.read_csv(this_dir + "/../data/germany.csv", sep=",")
     return confirmed_cases
 
 
