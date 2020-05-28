@@ -87,7 +87,7 @@ create_figure_distributions(models[1], traces[1],
                               num_changepoints=1, xlim_tbegin=7, save_to = path_to_save + 'Comment')
 create_figure_timeseries(traces[1], 'tab:red',
                          plot_red_axis=True, save_to=path_to_save + '1', add_more_later = False)
-loo = [pm.loo(e) for e in traces)]
+loo = [pm.loo(e) for e in traces]
 for i in [1]:
     print(f"\nnumber of changepoints: {i}")
     for j in range(i+1):
