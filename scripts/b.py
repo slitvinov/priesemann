@@ -1,25 +1,17 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[12]:
-
-
+#!/usr/bin/env python3
 import datetime
-import time as time_module
-import sys
-import os
-import pickle
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import scipy.stats
-import theano
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import pandas as pd
+import pickle
 import pymc3 as pm
+import scipy.stats
+import sys
+import theano
 import theano.tensor as tt
-
-
+import time as time_module
 
 try:
     import covid19_inference as cov19
@@ -29,36 +21,17 @@ except ModuleNotFoundError:
 
 path_to_save = '../figures/'
 path_save_pickled = '../data/'
+cases_obs = np.loadtxt("../data/germany.dat")
 rerun = True
-
-
-# In[13]:
-
-
-
-confirmed_cases = cov19.get_jhu_confirmed_cases()
-
-country = 'Germany'
 date_data_begin = datetime.datetime(2020,3,1)
-# date_data_end   = cov19.get_last_date(confirmed_cases)
 date_data_end = datetime.datetime(2020,4,21)
-
-#date_data_end   = datetime.datetime(2020,3,28)
 num_days_data = (date_data_end-date_data_begin).days
 diff_data_sim = 16 # should be significantly larger than the expected delay, in
                    # order to always fit the same number of data points.
-num_days_future = 28
+num_days_future = 1
 date_begin_sim = date_data_begin - datetime.timedelta(days = diff_data_sim)
 date_end_sim   = date_data_end   + datetime.timedelta(days = num_days_future)
 num_days_sim = (date_end_sim-date_begin_sim).days
-
-
-cases_obs = cov19.filter_one_country(confirmed_cases, country,
-                                     date_data_begin, date_data_end)
-
-print('Cases yesterday ({}): {} and '
-      'day before yesterday: {}'.format(date_data_end.isoformat(), *cases_obs[:-3:-1]))
-
 prior_date_mild_dist_begin =  datetime.datetime(2020,3,9)
 prior_date_strong_dist_begin =  datetime.datetime(2020,3,16)
 prior_date_contact_ban_begin =  datetime.datetime(2020,3,23)
