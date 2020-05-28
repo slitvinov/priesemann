@@ -65,6 +65,8 @@ prior_date_contact_ban_begin =  datetime.datetime(2020,3,23)
 
 change_points = [dict(pr_mean_date_begin_transient = prior_date_strong_dist_begin,
                        pr_sigma_date_begin_transient = 14,
+                       pr_median_transient_len=10,
+                       pr_sigma_transient_len=5,
                        pr_median_lambda = 1/8,
                        pr_sigma_lambda = 1.0)]
 
