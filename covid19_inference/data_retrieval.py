@@ -132,4 +132,6 @@ def get_last_date(data_df):
     month, day, year = map(int, last_date.split("/"))
     return datetime.datetime(year + 2000, month, day)
 
-
+_format_date = lambda date_py: "{}/{}/{}".format(
+    date_py.month, date_py.day, str(date_py.year)[2:4]
+)
