@@ -21,7 +21,7 @@ except ModuleNotFoundError:
 
 path_to_save = '../figures/'
 path_save_pickled = '../data/'
-cases_obs = np.loadtxt("../data/germany.dat")
+cases_obs = np.loadtxt("../data/germany.dat", dtype = int)
 rerun = True
 date_data_begin = datetime.datetime(2020,3,1)
 date_data_end = datetime.datetime(2020,4,21)
