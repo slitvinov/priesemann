@@ -68,7 +68,7 @@ def create_figure_timeseries(
     plot_par["draw_ci_95"] = True
     plot_par["draw_ci_75"] = False
 
-    ylabel_new = f"Daily new reported\ncases in {country}"
+    ylabel_new = f"new cases"
 
     pos_letter = (-0.3, 1)
     new_c_ylim = [0, 10_000]

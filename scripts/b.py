@@ -22,7 +22,7 @@ except ModuleNotFoundError:
 path_to_save = '../figures/'
 path_save_pickled = '../data/'
 cases_obs = np.loadtxt("../data/germany.dat", dtype = int)
-rerun = True
+rerun = False
 date_data_begin = datetime.datetime(2020,3,1)
 date_data_end = datetime.datetime(2020,4,21)
 num_days_data = (date_data_end-date_data_begin).days
@@ -42,9 +42,7 @@ change_points = [dict(pr_mean_date_begin_transient = prior_date_strong_dist_begi
                        pr_sigma_transient_len=5,
                        pr_median_lambda = 1/8,
                        pr_sigma_lambda = 1.0)]
-
 if rerun:
-
     traces = []
     models = []
     model = cov19.SIR_with_change_points(new_cases_obs = np.diff(cases_obs),
@@ -67,19 +65,7 @@ if rerun:
 
 else:
     models, traces = pickle.load(open(path_save_pickled + 'SIR_3scenarios_with_sine2.pickled', 'rb'))
-
-
-
-
-# In[21]:
-
-
 exec(open('figures_revised.py').read())
-
-
-# In[15]:
-
-
 trace = traces[3]
 fig, ax = plt.subplots(figsize=(5,4))
 time = np.arange(-len(cases_obs)+1, 0)
@@ -94,39 +80,16 @@ ax.set_ylabel('Difference (number of new cases)')
 ax.set_xlabel('Date')
 ax.legend(loc='upper left')
 print(np.median(np.sum(trace.new_cases[:, :num_days_data], axis=1)+ trace.I_begin))
-#plt.tight_layout()
 ax.xaxis.set_major_locator(matplotlib.dates.AutoDateLocator())
 ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%-m/%-d'))
-
-
-# In[33]:
-
-
 create_figure_distributions(models[1], traces[1],
                               additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:red',
-                              num_changepoints=1, xlim_tbegin=7, save_to = path_to_save +'Comment')
-
-# In[34]:
-
+                              num_changepoints=1, xlim_tbegin=7, save_to = path_to_save + 'Comment')
 create_figure_timeseries(traces[1], 'tab:red',
                          plot_red_axis=True, save_to=path_to_save + '1', add_more_later = False)
-
-
-# In[18]:
-
-
-print('\n1 step model\n')
-print(pm.loo(traces[1], models[1]))
-
-
-# In[32]:
-
-
+loo = [pm.loo(e) for e in traces)]
 for i in [1]:
     print(f"\nnumber of changepoints: {i}")
     for j in range(i+1):
         print(f'lambda* {j}')
         print(print_median_CI(traces[i][f"lambda_{j}"] - traces[i].mu, prec=2))
-
-
-# In[ ]:
