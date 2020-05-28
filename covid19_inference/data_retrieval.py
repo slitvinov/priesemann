@@ -97,31 +97,6 @@ def get_jhu_confirmed_cases():
     return confirmed_cases
 
 
-def get_jhu_deaths():
-    """
-        Attempts to download the most current data from the online repository of the
-        Coronavirus Visual Dashboard operated by the Johns Hopkins University
-        and falls back to the backup provided with our repo if it fails.
-        Only works if the module is located in the repo directory.
-
-        Returns
-        -------
-        : deaths
-            pandas table with reported deaths
-    """
-    try:
-        url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
-        deaths = pd.read_csv(url, sep=",")
-    except Exception as e:
-        print("Failed to download current data, using local copy.")
-        this_dir = os.path.dirname(__file__)
-        deaths = pd.read_csv(
-            this_dir + "/../data/confirmed_global_fallback_2020-04-28.csv", sep=","
-        )
-
-    return deaths
-
-
 def filter_one_country(data_df, country, begin_date, end_date):
     """
     Returns the number of cases of one country as a np.array, given a dataframe returned by `get_jhu_confirmed_cases`
@@ -274,37 +249,3 @@ def filter_rki(df, begin_date, end_date, variable = 'AnzahlFall', level = None, 
     df_series = df.groupby('date')[variable].sum().cumsum()
 
     return np.array(df_series[begin_date:end_date])
-
-def filter_rki_all_bundesland(df, begin_date, end_date, variable = 'AnzahlFall'):
-
-    """Filters the full RKI dataset
-
-    Parameters
-    ----------
-    df : DataFrame
-        RKI dataframe, from get_rki()
-    begin_date : str
-        initial date to return, in 'YYYY-MM-DD'
-    end_date : str
-        last date to return, in 'YYYY-MM-DD'
-    variable : str, optional
-        type of variable to return: cases ("AnzahlFall"), deaths ("AnzahlTodesfall"), recovered ("AnzahlGenesen")
-
-    Returns
-    -------
-    DataFrame
-        DataFrame with datetime dates as index, and all German Bundesland as columns
-    """
-
-    if variable not in ['AnzahlFall', 'AnzahlTodesfall', 'AnzahlGenesen']:
-        ValueError('Invalid variable. Valid options: "AnzahlFall", "AnzahlTodesfall", "AnzahlGenesen"')
-
-    #Nifty, if slightly unreadable one-liner
-    df2 = df.groupby(['date','Bundesland'])[variable].sum().reset_index().pivot(index='date',columns='Bundesland', values=variable).fillna(0)
-
-    #Returns cumsum of variable
-    return df2[begin_date:end_date].cumsum()
-
-_format_date = lambda date_py: "{}/{}/{}".format(
-    date_py.month, date_py.day, str(date_py.year)[2:4]
-)
