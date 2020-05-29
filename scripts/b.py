@@ -61,35 +61,14 @@ if rerun:
         models.append(models[0])
         traces.append(traces[0])
 
-    pickle.dump([models, traces], open(path_save_pickled + 'SIR_3scenarios_with_sine2.pickled', 'wb'))
+    pickle.dump([models, traces], open(path_save_pickled + 'b.pickled', 'wb'))
 
 else:
-    models, traces = pickle.load(open(path_save_pickled + 'SIR_3scenarios_with_sine2.pickled', 'rb'))
+    models, traces = pickle.load(open(path_save_pickled + 'b', 'rb'))
 exec(open('figures_revised.py').read())
-trace = traces[3]
-fig, ax = plt.subplots(figsize=(5,4))
-time = np.arange(-len(cases_obs)+1, 0)
-mpl_dates = conv_time_to_mpl_dates(time)
-ax.plot(mpl_dates, np.abs(np.median(trace.new_cases[:, :num_days_data], axis=0) - np.diff(cases_obs)),
-        'd', markersize=6,
-         label='Absolute difference\n'
-               'between fit and data')
-ax.plot(mpl_dates, np.sqrt(np.median(trace.new_cases[:, :num_days_data], axis=0))*np.median(trace.sigma_obs, axis=0),
-         label='Width of the likelihood', lw=3)
-ax.set_ylabel('Difference (number of new cases)')
-ax.set_xlabel('Date')
-ax.legend(loc='upper left')
-print(np.median(np.sum(trace.new_cases[:, :num_days_data], axis=1)+ trace.I_begin))
-ax.xaxis.set_major_locator(matplotlib.dates.AutoDateLocator())
-ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%-m/%-d'))
 create_figure_distributions(models[1], traces[1],
                               additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:red',
                               num_changepoints=1, xlim_tbegin=7, save_to = path_to_save + 'Comment')
 create_figure_timeseries(traces[1], 'tab:red',
-                         plot_red_axis=True, save_to=path_to_save + '1', add_more_later = False)
-#loo = [pm.loo(e) for e in traces]
-for i in [1]:
-    print(f"\nnumber of changepoints: {i}")
-    for j in range(i+1):
-        print(f'lambda* {j}')
-        print(print_median_CI(traces[i][f"lambda_{j}"] - traces[i].mu, prec=2))
+                         plot_red_axis=True, save_to=path_to_save + '1b', add_more_later = False)
+loo = [pm.loo(e) for e in traces]
