@@ -73,21 +73,19 @@ else:
 exec(open('figures_revised.py').read())
 create_figure_distributions(models[1], traces[1],
                               additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:red',
-                              num_changepoints=1, xlim_tbegin=7, save_to = path_to_save +'Fig_S2_paper')
+                              num_changepoints=1, xlim_tbegin=7, save_to = path_to_save +'distribution.1')
 create_figure_distributions(models[2], traces[2],
                               additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:orange',
-                              num_changepoints=2, xlim_tbegin=7, save_to = path_to_save +'Fig_4_paper')
+                              num_changepoints=2, xlim_tbegin=7, save_to = path_to_save +'distribution.2')
 create_figure_distributions(models[3], traces[3],
                               additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:green',
-                              num_changepoints=3, save_to = path_to_save + 'Fig_S4_paper')
-create_figure_timeseries(traces[0], 'tab:blue',
-                         plot_red_axis=True, save_to=path_to_save + '0a', add_more_later = False)
+                              num_changepoints=3, save_to = path_to_save + 'distribution.3')
 create_figure_timeseries(traces[1], 'tab:red',
-                         plot_red_axis=True, save_to=path_to_save + '1a', add_more_later = False)
+                         plot_red_axis=True, save_to=path_to_save + 'time.1', add_more_later = False)
 create_figure_timeseries(traces[2], 'tab:orange',
-                         plot_red_axis=True, save_to=path_to_save + '2a', add_more_later = False)
+                         plot_red_axis=True, save_to=path_to_save + 'time.2', add_more_later = False)
 create_figure_timeseries(traces[3], 'tab:green',
-                         plot_red_axis=True, save_to=path_to_save + '3a', add_more_later = False)
+                         plot_red_axis=True, save_to=path_to_save + 'time.3', add_more_later = False)
 loo = [pm.loo(e) for e in traces]
 for e in loo:
     print("lo: %.1f %.1f" % (-2*e['loo'], 2*e['loo_se']))
