@@ -35,13 +35,12 @@ num_days_sim = (date_end_sim-date_begin_sim).days
 prior_date_mild_dist_begin =  datetime.datetime(2020,3,9)
 prior_date_strong_dist_begin =  datetime.datetime(2020,3,16)
 prior_date_contact_ban_begin =  datetime.datetime(2020,3,23)
-
 change_points = [dict(pr_mean_date_begin_transient = prior_date_strong_dist_begin,
-                       pr_sigma_date_begin_transient = 14,
+                       pr_sigma_date_begin_transient = 1,
                        pr_median_transient_len=10,
                        pr_sigma_transient_len=5,
                        pr_median_lambda = 1/8,
-                       pr_sigma_lambda = 1.0)]
+                       pr_sigma_lambda = 0.5)]
 if rerun:
     traces = []
     models = []
@@ -56,20 +55,15 @@ if rerun:
                                         weekend_modulation_type = 'abs_sine')
     models.append(model)
     traces.append(pm.sample(model=model, init='advi', draws=4000, tune=1000, cores = 12))
-
-    for i in range(len(models), 4):
-        models.append(models[0])
-        traces.append(traces[0])
-
     pickle.dump([models, traces], open(path_save_pickled + 'b.pickled', 'wb'))
 
 else:
     models, traces = pickle.load(open(path_save_pickled + 'b', 'rb'))
-exec(open('figures_revised.py').read())
-create_figure_distributions(models[1], traces[1],
+exec(open('figures.py').read())
+create_figure_distributions(models[0], traces[0],
                             additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:blue',
                             num_changepoints=1, xlim_tbegin=7, save_to = path_to_save + 'distribution.1b')
-create_figure_timeseries(traces[1], 'tab:blue',
+create_figure_timeseries(traces[0], 'tab:blue',
                          plot_red_axis=True, save_to=path_to_save + 'time.1b', add_more_later = False)
 loo = [pm.loo(e) for e in traces]
 for e in loo:
