@@ -49,7 +49,6 @@ change_points = [dict(pr_mean_date_begin_transient = prior_date_mild_dist_begin,
                       pr_median_lambda = 1/8/2,
                       pr_sigma_lambda = 0.5)]
 if rerun:
-
     traces = []
     models = []
     for num_change_points in range(4):
@@ -64,8 +63,6 @@ if rerun:
                                             weekend_modulation_type = 'abs_sine')
         models.append(model)
         traces.append(pm.sample(model=model, init='advi', draws=4000, tune=1000, cores = 12))
-
-
     pickle.dump([models, traces], open(path_save_pickled + 'a.pickled', 'wb'))
 
 else:

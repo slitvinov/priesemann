@@ -67,9 +67,9 @@ else:
     models, traces = pickle.load(open(path_save_pickled + 'b', 'rb'))
 exec(open('figures_revised.py').read())
 create_figure_distributions(models[1], traces[1],
-                              additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:red',
-                              num_changepoints=1, xlim_tbegin=7, save_to = path_to_save + 'distribution.1b')
-create_figure_timeseries(traces[1], 'tab:red',
+                            additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:blue',
+                            num_changepoints=1, xlim_tbegin=7, save_to = path_to_save + 'distribution.1b')
+create_figure_timeseries(traces[1], 'tab:blue',
                          plot_red_axis=True, save_to=path_to_save + 'time.1b', add_more_later = False)
 loo = [pm.loo(e) for e in traces]
 for e in loo:
