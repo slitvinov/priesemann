@@ -1025,7 +1025,7 @@ def create_figure_distributions_old(
             x_for_ax *= np.pi * 2 / 7
 
         if trace_prior is None:
-            prior_dist = cov19.plotting.get_prior_distribution(model, x_for_pr, key)
+            prior_dist = get_prior_distribution(model, x_for_pr, key)
         else:
             kde = scipy.stats.gaussian_kde(trace_prior[key])
             prior_dist = kde.evaluate((x_for_pr))

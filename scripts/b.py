@@ -22,7 +22,7 @@ except ModuleNotFoundError:
 path_to_save = '../figures/'
 path_save_pickled = '../data/'
 cases_obs = np.loadtxt("../data/germany.dat", dtype = int)
-rerun = True
+rerun = False
 date_data_begin = datetime.datetime(2020,3,1)
 date_data_end = datetime.datetime(2020,4,21)
 num_days_data = (date_data_end-date_data_begin).days
@@ -37,7 +37,7 @@ prior_date_strong_dist_begin =  datetime.datetime(2020,3,16)
 prior_date_contact_ban_begin =  datetime.datetime(2020,3,23)
 change_points = [dict(pr_mean_date_begin_transient = prior_date_strong_dist_begin,
                        pr_sigma_date_begin_transient = 1,
-                       pr_median_transient_len=10,
+                       pr_median_transient_len=16,
                        pr_sigma_transient_len=5,
                        pr_median_lambda = 1/8,
                        pr_sigma_lambda = 0.5)]
@@ -55,15 +55,15 @@ if rerun:
                                         weekend_modulation_type = 'abs_sine')
     models.append(model)
     traces.append(pm.sample(model=model, init='advi', draws=4000, tune=1000, cores = 12))
-    pickle.dump([models, traces], open(path_save_pickled + 'b.pickled', 'wb'))
+    pickle.dump([models, traces], open(path_save_pickled + 'b.pickle', 'wb'))
 
 else:
-    models, traces = pickle.load(open(path_save_pickled + 'b', 'rb'))
-exec(open('figures.py').read())
+    models, traces = pickle.load(open(path_save_pickled + 'b.pickle', 'rb'))
+exec(open('figures_org.py').read())
 create_figure_distributions(models[0], traces[0],
-                            additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:blue',
+                            additional_insets = None, xlim_lambda = (0, 0.53), color = 'tab:red',
                             num_changepoints=1, xlim_tbegin=7, save_to = path_to_save + 'distribution.1b')
-create_figure_timeseries(traces[0], 'tab:blue',
+create_figure_timeseries(traces[0], 'tab:red',
                          plot_red_axis=True, save_to=path_to_save + 'time.1b', add_more_later = False)
 loo = [pm.loo(e) for e in traces]
 for e in loo:
