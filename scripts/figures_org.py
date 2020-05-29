@@ -1932,7 +1932,7 @@ def create_figure_distributions(
             x_for_ax *= np.pi * 2 / 7
 
         if trace_prior is None:
-            prior_dist = cov19.plotting.get_prior_distribution(model, x_for_pr, key)
+            prior_dist = get_prior_distribution(model, x_for_pr, key)
         else:
             kde = scipy.stats.gaussian_kde(trace_prior[key])
             prior_dist = kde.evaluate((x_for_pr))
@@ -2324,3 +2324,18 @@ def conv_time_to_mpl_dates(arr):
         return matplotlib.dates.date2num(
             datetime.timedelta(days=float(arr)) + date_begin_sim
         )
+
+def get_prior_distribution(model, x, varname):
+    """
+    Given a model and variable name, returns the prior distribution evaluated at x.
+    Parameters
+    ----------
+    model: pm.Model instance
+    x: list or array
+    varname: string
+
+    Returns
+    -------
+    : array
+    """
+    return np.exp(model[varname].distribution.logp(x).eval())
