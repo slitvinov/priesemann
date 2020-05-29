@@ -72,3 +72,5 @@ create_figure_distributions(models[1], traces[1],
 create_figure_timeseries(traces[1], 'tab:red',
                          plot_red_axis=True, save_to=path_to_save + '1b', add_more_later = False)
 loo = [pm.loo(e) for e in traces]
+for e in loo:
+    print("lo: %.1f %.1f" % (-2*e['loo'], 2*e['loo_se']))

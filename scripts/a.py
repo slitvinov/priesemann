@@ -22,7 +22,7 @@ except ModuleNotFoundError:
 path_to_save = '../figures/'
 path_save_pickled = '../data/'
 cases_obs = np.loadtxt("../data/germany.dat", dtype = int)
-rerun = True
+rerun = False
 date_data_begin = datetime.datetime(2020,3,1)
 date_data_end = datetime.datetime(2020,4,21)
 num_days_data = (date_data_end-date_data_begin).days
@@ -89,3 +89,5 @@ create_figure_timeseries(traces[2], 'tab:orange',
 create_figure_timeseries(traces[3], 'tab:green',
                          plot_red_axis=True, save_to=path_to_save + '3a', add_more_later = False)
 loo = [pm.loo(e) for e in traces]
+for e in loo:
+    print("lo: %.1f %.1f" % (-2*e['loo'], 2*e['loo_se']))
