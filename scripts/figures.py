@@ -1,20 +1,18 @@
-# %load figures_revised
-import datetime
-import time as time_module
-import sys
-import os
-import locale
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib import rc_context
-import scipy.stats
-import theano
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+import datetime
+import locale
 import matplotlib
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import pandas as pd
 import pymc3 as pm
+import scipy.stats
+import sys
+import theano
+import time as time_module
 
 try:
     import covid19_inference as cov19

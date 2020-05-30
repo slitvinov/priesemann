@@ -1,20 +1,18 @@
-# %load figures_revised
-import datetime
-import time as time_module
-import sys
-import os
-import locale
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib import rc_context
-import scipy.stats
-import theano
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+import datetime
+import locale
 import matplotlib
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import pandas as pd
 import pymc3 as pm
+import scipy.stats
+import sys
+import theano
+import time as time_module
 
 try:
     import covid19_inference as cov19
@@ -22,18 +20,11 @@ except ModuleNotFoundError:
     sys.path.append("../..")
     import covid19_inference as cov19
 
-
-# ------------------------------------------------------------------------------ #
-# global settings and variables
-# ------------------------------------------------------------------------------ #
-
-# styling for prior distributions
 prio_style = {
     "color": "#708090",
     "linewidth": 3,
     "label": "Prior",
 }
-# styling for posterior distributions
 post_style = {
     "density": True,
     "color": "tab:orange",
@@ -41,17 +32,12 @@ post_style = {
     "zorder": -2,
 }
 
-# format the date on the x axis (see https://strftime.org/) example April 1 2020
-# date_format = "%m/%d"  # 04/01
 date_format = "%b %-d"  # Apr 1
-# date_format = "%-d. %B" # 1. April
 try:
     locale.setlocale(locale.LC_ALL, "en_US")
-    # locale.setlocale(locale.LC_ALL,'de_DE')
 except:
     pass
 
-# whether to show the minor ticks (for every day)
 date_show_minor_ticks = True
 
 # set to None to keep everything a vector, with `-1` Posteriors are rastered (see above)
@@ -887,250 +873,6 @@ def create_figure_distributions(
     if save_to is not None:
         plt.savefig(save_to + ".pdf", bbox_inches="tight", pad_inches=0.05, dpi=300)
         plt.savefig(save_to + ".png", bbox_inches="tight", pad_inches=0.05, dpi=300)
-
-
-def create_figure_distributions_old(
-    model,
-    trace,
-    save_to=None,
-    additional_insets=None,
-    xlim_lambda=(0, 0.53),
-    color="tab:green",
-    num_changepoints=3,
-    xlim_tbegin=4,
-    trace_prior=None,
-    name_trans_day="transient_begin_",
-):
-    """
-        the old function, without the layout changes.
-        create the distribution overview plot. only using layout 2 from now on.
-    """
-    if additional_insets is None:
-        additional_insets = {}
-    colors = ["#708090", color]
-
-    additional_dists = len(additional_insets)
-    num_columns = int(np.ceil((additional_dists + 14) / 5))
-    num_rows = num_changepoints + 2
-    width_col = 4.5 / 3 * num_columns
-    height_fig = 6 if not num_changepoints == 1 else 5
-    fig, axes = plt.subplots(
-        num_rows, num_columns, figsize=(width_col, 6), constrained_layout=True
-    )
-
-    xlim_transt = (0, 7)
-    xlim_tbegin = xlim_tbegin  # median plus minus x days
-
-    axpos = dict()
-    letters = dict()
-
-    # leave away the closing doller, we add it later
-    insets = dict()
-    insets["lambda_0"] = r"$\lambda_0 \simeq "
-    for i in range(0, num_changepoints):
-        insets[f"lambda_{i+1}"] = f"$\lambda_{i+1} \simeq "
-        insets[f"transient_begin_{i}"] = f"$t_{i+1} \simeq "
-        insets[f"transient_len_{i}"] = f"$\Delta t_{i+1} \simeq "
-
-    insets["mu"] = r"$\mu \simeq "
-    insets["delay"] = r"$D \simeq "
-    insets["sigma_obs"] = r"$\sigma \simeq "
-    insets["I_begin"] = r"$I_0 \simeq "
-
-    for key, inset in additional_insets.items():
-        insets[key] = inset
-
-    # layout 2
-    pos_letter = (-0.2, 1.1)
-    labels = get_label_dict()
-    axpos["lambda_0"] = axes[1][0]
-    for i_cp in range(0, num_changepoints):
-        axpos["lambda_{}".format(i_cp + 1)] = axes[i_cp + 2][0]
-        axpos["transient_begin_{}".format(i_cp)] = axes[i_cp + 2][1]
-        axpos["transient_len_{}".format(i_cp)] = axes[i_cp + 2][2]
-
-    axpos["mu"] = axes[0][0]
-    axpos["delay"] = axes[1][2]
-    axpos["I_begin"] = axes[1][1]
-    axpos["sigma_obs"] = axes[0][1]
-
-    letters["lambda_0"] = r"E"
-    letters["lambda_1"] = r"F"
-    letters["mu"] = r"D"
-
-    i = num_rows - 1
-    for i, (key, inset) in enumerate(additional_insets.items()):
-        print(f"additional insets: {key}")
-        col = int(np.floor((i + 14) / num_rows))
-        row = i % num_rows
-        axpos[key] = axes[row][col]
-    for i in range(i + 1, num_rows):
-        axes[i][col].set_visible(False)
-    if not len(additional_insets) % num_rows == 1:
-        axpos["legend"] = axes[0][num_columns - 1]
-
-    # render panels
-    for key in axpos.keys():
-        if "legend" in key:
-            continue
-
-        data = trace[key]
-        if "transient_begin" in key:
-            data = conv_time_to_mpl_dates(trace[key])
-        elif "weekend_factor_rad" == key:
-            data = data / np.pi / 2 * 7
-
-        ax = axpos[key]
-        # using .get returns None when the key is not in the dict, and avoids KeyError
-        ax.set_xlabel(labels.get(key))
-        ax.xaxis.set_label_position("top")
-
-        # make some bold
-        if key == "lambda_1" or key == "transient_begin_0" or key == "transient_len_0":
-            ax.set_xlabel(labels.get(key), fontweight="bold")
-
-        # posteriors
-        ax.hist(
-            data,
-            bins=50,
-            density=True,
-            color=colors[1],
-            label="Posterior",
-            alpha=0.7,
-            zorder=-5,
-        )
-
-        # xlim
-        if "lambda" in key or "mu" == key:
-            ax.set_xlim(xlim_lambda)
-            ax.axvline(np.median(trace["mu"]), ls=":", color="black")
-        elif "I_begin" == key:
-            ax.set_xlim(0)
-        elif "transient_len" in key:
-            ax.set_xlim(xlim_transt)
-        elif "transient_begin" in key:
-            md = np.median(data)
-            ax.set_xlim([int(md) - xlim_tbegin, int(md) + xlim_tbegin - 1])
-            format_date_xticks(ax)
-
-        # priors
-        limits = ax.get_xlim()
-        x_for_ax = np.linspace(*limits, num=100)
-        x_for_pr = x_for_ax
-        if "transient_begin" in key:
-            beg_x = matplotlib.dates.num2date(x_for_ax[0])
-            diff_dates_x = (beg_x.replace(tzinfo=None) - date_begin_sim).days
-            x_for_pr = x_for_ax - x_for_ax[0] + diff_dates_x
-        if "weekend_factor_rad" == key:
-            x_for_ax *= np.pi * 2 / 7
-
-        if trace_prior is None:
-            prior_dist = get_prior_distribution(model, x_for_pr, key)
-        else:
-            kde = scipy.stats.gaussian_kde(trace_prior[key])
-            prior_dist = kde.evaluate((x_for_pr))
-
-        ax.plot(
-            x_for_ax, prior_dist, label="Prior", color=colors[0], linewidth=3,
-        )
-        ax.set_xlim(*limits)
-
-        # letters
-        if key in letters.keys():
-            ax.text(
-                pos_letter[0],
-                pos_letter[1],
-                letters[key],
-                transform=ax.transAxes,
-                size=14,
-                horizontalalignment="left",
-            )
-
-        # median
-        global text
-        if "lambda" in key or "mu" == key or "sigma_random_walk" == key:
-            text = print_median_CI(data, prec=2)
-        elif "transient_begin" in key:
-            text = print_median_CI(
-                data - matplotlib.dates.date2num(date_data_begin) + 1, prec=1
-            )
-        else:
-            text = print_median_CI(data, prec=1)
-
-        if key in insets.keys():
-            # strip everything except the median value
-            text = text.replace("Median: ", "").replace("CI: ", "")
-            md = text.split("\n")[0]
-            ci = text.split("\n")[1]
-
-            # create the inset text and we want a bounding box around the compound
-            # text = insets[key] + md + "$" + "\n" + r"$\,$"
-            text = insets[key] + md + "$"
-            t_xl = ax.text(
-                0.6,
-                0.9,
-                text,
-                fontsize=12,
-                transform=ax.transAxes,
-                verticalalignment="top",
-                horizontalalignment="center",
-                # bbox=dict(facecolor="white", alpha=0.5, edgecolor="none"),
-                zorder=100,
-            )
-
-            x_min, x_max, y_min, y_max = get_mpl_text_coordinates(t_xl, ax)
-
-            t_sm = ax.text(
-                0.6,
-                y_min,
-                ci,
-                fontsize=9,
-                transform=ax.transAxes,
-                verticalalignment="top",
-                horizontalalignment="center",
-                # bbox=dict(facecolor="white", alpha=0.5, edgecolor="none"),
-                zorder=101,
-            )
-
-            add_mpl_rect_around_text(
-                [t_xl, t_sm], ax, facecolor="white", alpha=0.5, zorder=99,
-            )
-
-    # legend
-    if "legend" in axpos:
-        ax = axpos["legend"]
-        ax.set_axis_off()
-        ax.plot([], [], color=colors[0], linewidth=3, label="Prior")
-        ax.hist([], color=colors[1], label="Posterior")
-        ax.legend(loc="center left")
-        ax.get_legend().get_frame().set_linewidth(0.0)
-        ax.get_legend().get_frame().set_facecolor("#F0F0F0")
-
-    # dirty hack to get some space at the bottom to align with timeseries
-    if not num_changepoints == 1:
-        axes[-1][0].xaxis.set_label_position("bottom")
-        axes[-1][0].set_xlabel(r"$\,$")
-
-    for jdx, ax_row in enumerate(axes):
-        for idx, ax in enumerate(ax_row):
-            if idx == 0 and jdx == 0:
-                ax.set_ylabel("Density")
-            ax.tick_params(labelleft=False)
-            ax.locator_params(nbins=4)
-            ax.set_rasterization_zorder(rasterization_zorder)
-            ax.spines["right"].set_visible(False)
-            ax.spines["top"].set_visible(False)
-
-    # plt.subplots_adjust(wspace=0.2, hspace=0.9)
-
-    if save_to is not None:
-        plt.savefig(save_to + ".pdf", bbox_inches="tight", pad_inches=0, dpi=300)
-        plt.savefig(save_to + ".png", bbox_inches="tight", pad_inches=0, dpi=300)
-
-
-# ------------------------------------------------------------------------------ #
-# helper
-# ------------------------------------------------------------------------------ #
 
 # format yaxis 10_000 as 10 k
 format_k = lambda num, _: "${:.0f}\,$k".format(num / 1_000)
