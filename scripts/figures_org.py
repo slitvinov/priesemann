@@ -17,7 +17,7 @@ import time as time_module
 try:
     import covid19_inference as cov19
 except ModuleNotFoundError:
-    sys.path.append("../..")
+    sys.path.append("../..") 
     import covid19_inference as cov19
 
 prio_style = {
