@@ -52,6 +52,33 @@ date_show_minor_ticks = True
 # set to None to keep everything a vector, with `-1` Posteriors are rastered (see above)
 rasterization_zorder = -1
 
+def create_figure_accuracy(y, color, save_to):
+    num_days_futu_to_plot=1
+    ylabel_new = f"pointwise predictive accuracy"
+    new_c_ylim = [0, 10_000]
+    fig, axes = plt.subplots(1, 1, gridspec_kw={"height_ratios": [1]}, constrained_layout=True)
+    diff_to_0 = num_days_data + diff_data_sim
+    start_date = conv_time_to_mpl_dates(-len(y[0]) + 1) + diff_to_0
+    end_date = conv_time_to_mpl_dates(num_days_futu_to_plot) + diff_to_0
+    mid_date = conv_time_to_mpl_dates(1) + diff_to_0
+    time_past = np.arange(-len(y[0]), 1)
+    time_futu = np.arange(0, num_days_futu_to_plot + 1)
+    mpl_dates_past = conv_time_to_mpl_dates(time_past) + diff_to_0
+    ax = axes
+    for y0, c0 in zip(y, color):
+        ax.plot(mpl_dates_past[1:], y0, "-", linewidth=3, color=c0)
+    ax.set_ylabel(ylabel_new)
+    ax.set_rasterization_zorder(rasterization_zorder)
+    ax.spines["right"].set_visible(False)
+    ax.spines["top"].set_visible(False)
+    ax.set_xlim(start_date, end_date)
+    format_date_xticks(ax)
+    for label in ax.xaxis.get_ticklabels()[1::2]:
+        label.set_visible(False)
+    plt.savefig(save_to + ".png", dpi=100, bbox_inches="tight", pad_inches=0.05)
+    return fig, axes
+
+
 def create_figure_timeseries(
     trace,
     color="tab:green",

@@ -81,7 +81,7 @@ create_figure_timeseries(traces[1], 'tab:orange',
                          plot_red_axis=True, save_to=path_to_save + 'time.2', add_more_later = False)
 create_figure_timeseries(traces[2], 'tab:green',
                          plot_red_axis=True, save_to=path_to_save + 'time.3', add_more_later = False)
-loo = [pm.loo(e, scale='deviance') for e in traces]
+loo = [pm.loo(e, scale='deviance', pointwise=True) for e in traces]
 for e in reversed(loo):
     print("lo: %.2f %.2f %.2f" % (e['loo'], e['loo_se'], e['p_loo']))
 
@@ -93,3 +93,7 @@ compare = pm.compare({models[0].name: traces[0],
                       models[2].name: traces[2]},
                      ic='LOO', scale='deviance')
 print(compare)
+
+#create_figure_accuracy( [loo[0]['loo_i'], loo[1]['loo_i'], loo[2]['loo_i']],
+#                        ['tab:red', 'tab:orange', 'tab:green'],
+#                        path_to_save + 'accuracy')
