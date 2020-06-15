@@ -26,8 +26,7 @@ rerun = True
 date_data_begin = datetime.datetime(2020,3,1)
 date_data_end = datetime.datetime(2020,4,21)
 num_days_data = (date_data_end-date_data_begin).days
-diff_data_sim = 16 # should be significantly larger than the expected delay, in
-                   # order to always fit the same number of data points.
+diff_data_sim = 16
 num_days_future = 1
 date_begin_sim = date_data_begin - datetime.timedelta(days = diff_data_sim)
 date_end_sim   = date_data_end   + datetime.timedelta(days = num_days_future)
