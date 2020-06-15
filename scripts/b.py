@@ -65,6 +65,14 @@ create_figure_distributions(models[0], traces[0],
                             num_changepoints=1, xlim_tbegin=7, save_to = path_to_save + 'distribution.1b')
 create_figure_timeseries(traces[0], 'tab:red',
                          plot_red_axis=True, save_to=path_to_save + 'time.1b', add_more_later = False)
-loo = [pm.loo(e) for e in traces]
-for e in loo:
-    print("lo: %.1f %.1f" % (-2*e['loo'], 2*e['loo_se']))
+loo = [pm.loo(e, scale='deviance', pointwise=True) for e in traces]
+for e in reversed(loo):
+    print("lo: %.2f %.2f %.2f" % (e['loo'], e['loo_se'], e['p_loo']))
+models[0].name = 'one point'
+models[1].name = 'two points'
+models[2].name = 'three points'
+compare = pm.compare({models[0].name: traces[0],
+                      models[1].name: traces[1],
+                      models[2].name: traces[2]},
+                     ic='LOO', scale='deviance')
+print(compare)

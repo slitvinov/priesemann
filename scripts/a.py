@@ -22,7 +22,7 @@ except ModuleNotFoundError:
 path_to_save = '../figures/'
 path_save_pickled = '../data/'
 cases_obs = np.loadtxt("../data/germany.dat", dtype = int)
-rerun = False
+rerun = True
 date_data_begin = datetime.datetime(2020,3,1)
 date_data_end = datetime.datetime(2020,4,21)
 num_days_data = (date_data_end-date_data_begin).days
@@ -84,7 +84,6 @@ create_figure_timeseries(traces[2], 'tab:green',
 loo = [pm.loo(e, scale='deviance', pointwise=True) for e in traces]
 for e in reversed(loo):
     print("lo: %.2f %.2f %.2f" % (e['loo'], e['loo_se'], e['p_loo']))
-
 models[0].name = 'one point'
 models[1].name = 'two points'
 models[2].name = 'three points'
