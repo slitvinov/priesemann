@@ -54,7 +54,7 @@ if rerun:
                                         weekends_modulated=True,
                                         weekend_modulation_type = 'abs_sine')
     models.append(model)
-    traces.append(pm.sample(model=model, init='advi', draws=4000, tune=10000, cores = 12))
+    traces.append(pm.sample(model=model, init='advi', draws=4000, tune=1000, cores = 12))
     pickle.dump([models, traces], open(path_save_pickled + 'b.pickle', 'wb'))
 
 else:
