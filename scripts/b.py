@@ -67,11 +67,3 @@ create_figure_timeseries(traces[0], 'tab:red',
 loo = [pm.loo(e, scale='deviance', pointwise=True) for e in traces]
 for e in reversed(loo):
     print("lo: %.2f %.2f %.2f" % (e['loo'], e['loo_se'], e['p_loo']))
-models[0].name = 'one point'
-models[1].name = 'two points'
-models[2].name = 'three points'
-compare = pm.compare({models[0].name: traces[0],
-                      models[1].name: traces[1],
-                      models[2].name: traces[2]},
-                     ic='LOO', scale='deviance')
-print(compare)

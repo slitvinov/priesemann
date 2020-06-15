@@ -91,7 +91,3 @@ compare = pm.compare({models[0].name: traces[0],
                       models[2].name: traces[2]},
                      ic='LOO', scale='deviance')
 print(compare)
-
-#create_figure_accuracy( [loo[0]['loo_i'], loo[1]['loo_i'], loo[2]['loo_i']],
-#                        ['tab:red', 'tab:orange', 'tab:green'],
-#                        path_to_save + 'accuracy')
